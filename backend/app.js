@@ -6,6 +6,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const usersRouter = require('./src/routes/users');
 const teamsRouter = require('./src/routes/teams');
 const alertsRouter = require('./src/routes/alerts');
+const notificationsRouter = require('./src/routes/notifications');
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ const swaggerOptions = {
 app.use('/api/users', usersRouter);
 app.use('/api/teams', teamsRouter);
 app.use('/api/alerts', alertsRouter);
+app.use('/api/notifications', notificationsRouter);
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));

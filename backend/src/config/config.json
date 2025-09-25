@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "postgre",
+    "database": "alerting_notification",
+    "host": "127.0.0.1",
+    "dialect": "postgresql"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "postgre",
+    "database": "alerting_notification",
+    "host": "127.0.0.1",
+    "dialect": "postgresql"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "postgre",
+    "database": "alerting_notification",
+    "host": "127.0.0.1",
+    "dialect": "postgresql"
+  }
+}

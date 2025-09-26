@@ -19,14 +19,43 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const user = await User.findOne({ where: { email: req.body.email } });
-  if (!user) return res.status(401).json({ error: 'No user found' });
-  const match = await bcrypt.compare(req.body.password, user.password);
-  if (!match) return res.status(401).json({ error: 'Invalid credentials' });
+  
 
-  const token = jwt.sign({ id: user.id }, SECRET, { expiresIn: '1d' });
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+  const start = Date.now();
+
+  // 1. Fetch user from database
+  
+  const user = await User.findOne({ where: { email: req.body.email } });
+  
+
+  if (!user) {
+    
+    return res.status(401).json({ error: 'No user found' });
+  }
+
+  // 2. Compare passwords
+  
+  const match = await bcrypt.compare(req.body.password, user.password);
+  
+
+  if (!match) {
+    
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  // 3. Sign JWT
+  
+  const token = jwt.sign(
+    { id: user.id, role: user.role, name: user.name, email: user.email },
+    SECRET,
+    { expiresIn: '1d' }
+  );
+  
+  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 };
+
+
+
 
 exports.profile = async (req, res) => {
   const user = await User.findByPk(req.user.id);

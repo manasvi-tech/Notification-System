@@ -73,6 +73,12 @@ exports.update = async (req, res) => {
   try {
     const alert = await Alert.findByPk(req.params.id);
     if (!alert) return res.status(404).json({ error: 'Alert not found' });
+
+    // Protect update: Only creator or any admin can update
+    if (req.user.role !== 'admin' && alert.created_by !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: Not allowed to update this alert' });
+    }
+
     await alert.update(req.body);
     res.json({ message: 'Updated', alert });
   } catch (e) {
@@ -80,14 +86,22 @@ exports.update = async (req, res) => {
   }
 };
 
+
 // Delete an alert
 exports.delete = async (req, res) => {
   try {
     const alert = await Alert.findByPk(req.params.id);
     if (!alert) return res.status(404).json({ error: 'Alert not found' });
+
+    // Protect delete: Only creator or any admin can delete
+    if (req.user.role !== 'admin' && alert.created_by !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: Not allowed to delete this alert' });
+    }
+
     await alert.destroy();
     res.json({ message: 'Deleted' });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 };
+

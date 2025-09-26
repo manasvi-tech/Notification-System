@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const alertController = require('../controllers/alertController');
 const authenticate = require('../utils/authenticate'); // protect as needed
+const authorize = require('../utils/authorize');
 
 /**
  * @swagger
@@ -63,7 +64,7 @@ const authenticate = require('../utils/authenticate'); // protect as needed
  *       201:
  *         description: Alert created
  */
-router.post('/', authenticate, alertController.create);
+router.post('/', authenticate,  authorize('admin'), alertController.create);
 
 /**
  * @swagger
@@ -77,7 +78,7 @@ router.post('/', authenticate, alertController.create);
  *       200:
  *         description: List of alerts
  */
-router.get('/', authenticate, alertController.list);
+router.get('/', authenticate, authorize('admin'), alertController.list);
 
 /**
  * @swagger
@@ -99,7 +100,7 @@ router.get('/', authenticate, alertController.list);
  *       404:
  *         description: Alert not found
  */
-router.get('/:id', authenticate, alertController.get);
+router.get('/:id', authenticate, authorize('admin'), alertController.get);
 
 /**
  * @swagger
@@ -158,7 +159,7 @@ router.get('/:id', authenticate, alertController.get);
  *       404:
  *         description: Alert not found
  */
-router.put('/:id', authenticate, alertController.update);
+router.put('/:id', authenticate, authorize('admin'), alertController.update);
 
 /**
  * @swagger

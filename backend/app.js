@@ -8,6 +8,7 @@ const teamsRouter = require('./src/routes/teams');
 const alertsRouter = require('./src/routes/alerts');
 const userAlertPrefsRouter = require('./src/routes/userAlertPrefs');
 const notificationsRouter = require('./src/routes/notifications');
+require('./src/scheduler/notifications');
 
 const app = express();
 app.use(express.json());

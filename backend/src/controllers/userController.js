@@ -1,8 +1,9 @@
 // src/controllers/userController.js
-const { User } = require('../models');
+const { User , UserAlertPreference, Alert} = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const SECRET = 'your_secret'; // move to env vars
+const { Op } = require('sequelize');
 
 exports.register = async (req, res) => {
   try {
@@ -73,4 +74,33 @@ exports.update = async (req, res) => {
 exports.list = async (req, res) => {
   const users = await User.findAll({ attributes: ['id', 'name', 'email', 'role', 'team_id'] });
   res.json(users);
+};
+
+
+// GET /api/my-alerts — Get active alerts for current user
+exports.myAlerts = async (req, res) => {
+  const now = new Date();
+
+  // Active alerts for user, not snoozed, not expired
+  const alertIds = await UserAlertPreference.findAll({
+    where: {
+      user_id: req.user.id,
+      [Op.or]: [
+        { snoozed_until: null },
+        { snoozed_until: { [Op.lt]: now } }
+      ]
+    },
+    attributes: ['alert_id']
+  }).then(list => list.map(p => p.alert_id));
+
+  const alerts = await Alert.findAll({
+    where: {
+      id: { [Op.in]: alertIds },
+      status: 'active',
+      expiry_time: { [Op.gt]: now },
+      start_time: { [Op.lte]: now }
+    }
+  });
+
+  res.json(alerts);
 };

@@ -3,6 +3,38 @@ const router = express.Router();
 const alertController = require('../controllers/alertController');
 const authenticate = require('../utils/authenticate'); // protect as needed
 const authorize = require('../utils/authorize');
+const alertAnalyticsController = require('../controllers/alertAnalyticsController');
+
+
+/**
+ * @swagger
+ * /api/alerts/analytics:
+ *   get:
+ *     summary: Get alert analytics statistics
+ *     tags: [Alerts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Analytics data for alerts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalAlerts: { type: integer, description: "Total number of alerts created" }
+ *                 delivered: { type: integer, description: "Total notifications delivered" }
+ *                 readPrefs: { type: integer, description: "Number marked read" }
+ *                 snoozedPrefs: { type: integer, description: "Number snoozed" }
+ *                 bySeverity:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       severity: { type: string }
+ *                       count: { type: integer }
+ */
+router.get('/analytics', authenticate, alertAnalyticsController.analytics);
 
 /**
  * @swagger
@@ -182,6 +214,10 @@ router.put('/:id', authenticate, authorize('admin'), alertController.update);
  *         description: Alert not found
  */
 router.delete('/:id', authenticate, alertController.delete);
+
+
+
+
 
 
 module.exports = router;
